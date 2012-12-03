@@ -21,7 +21,9 @@
 #include "OSAL_Pin.h"
 
 #ifdef CONFIG_ARCH_SUN5I
+#ifdef CONFIG_POWER_SUPPLY
 #include "../../../../power/axp_power/axp-gpio.h"
+#endif
 #endif
 
 __hdle OSAL_GPIO_Request(user_gpio_set_t *gpio_list, __u32 group_count_max)
@@ -32,6 +34,7 @@ __hdle OSAL_GPIO_Request(user_gpio_set_t *gpio_list, __u32 group_count_max)
 	      gpio_list->drv_level, gpio_list->data);
 
 #ifdef CONFIG_ARCH_SUN5I
+#ifdef CONFIG_POWER_SUPPLY
 	if (gpio_list->port == 0xffff) {
 		if (gpio_list->mul_sel == 0 || gpio_list->mul_sel == 1) {
 			axp_gpio_set_io(gpio_list->port_num,
@@ -42,6 +45,7 @@ __hdle OSAL_GPIO_Request(user_gpio_set_t *gpio_list, __u32 group_count_max)
 		} else
 			return 0;
 	} else
+#endif
 #endif
 		return gpio_request(gpio_list, group_count_max);
 }
@@ -101,10 +105,12 @@ __s32 OSAL_GPIO_DevSetONEPIN_IO_STATUS(u32 p_handler,
 				       const char *gpio_name)
 {
 #ifdef CONFIG_ARCH_SUN5I
+#ifdef CONFIG_POWER_SUPPLY
 	if (p_handler < 200 && p_handler >= 100)
 		return axp_gpio_set_io(p_handler - 100,
 				       if_set_to_output_status);
 	else
+#endif
 #endif
 		return gpio_set_one_pin_io_status(p_handler,
 						  if_set_to_output_status,
@@ -120,12 +126,14 @@ __s32 OSAL_GPIO_DevSetONEPIN_PULL_STATUS(u32 p_handler, __u32 set_pull_status,
 __s32 OSAL_GPIO_DevREAD_ONEPIN_DATA(u32 p_handler, const char *gpio_name)
 {
 #ifdef CONFIG_ARCH_SUN5I
+#ifdef CONFIG_POWER_SUPPLY
 	if (p_handler < 200 && p_handler >= 100) {
 		int value;
 
 		axp_gpio_get_value(p_handler - 100, &value);
 		return value;
 	} else
+#endif
 #endif
 		return gpio_read_one_pin_value(p_handler, gpio_name);
 }
@@ -134,9 +142,11 @@ __s32 OSAL_GPIO_DevWRITE_ONEPIN_DATA(u32 p_handler, __u32 value_to_gpio,
 				     const char *gpio_name)
 {
 #ifdef CONFIG_ARCH_SUN5I
+#ifdef CONFIG_POWER_SUPPLY
 	if ((p_handler < 200) && (p_handler >= 100))
 		return axp_gpio_set_value(p_handler - 100, value_to_gpio);
 	else
+#endif
 #endif
 		return gpio_write_one_pin_value(p_handler, value_to_gpio,
 						gpio_name);
