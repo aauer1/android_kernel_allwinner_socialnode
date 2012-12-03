@@ -190,7 +190,7 @@ Foscl is clock SCL;standard mode:100KHz or fast mode:400KHz
 
 #define I2C0_TRANSFER_SPEED     (400000)
 #define I2C1_TRANSFER_SPEED     (200000)
-#define I2C2_TRANSFER_SPEED     (200000)
+#define I2C2_TRANSFER_SPEED     (100000)
 
 struct sun5i_i2c_platform_data {
 	int 		 bus_num;
