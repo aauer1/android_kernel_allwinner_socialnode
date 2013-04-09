@@ -33,6 +33,7 @@
 #include <linux/io.h>
 #include <linux/gpio.h>
 #include <linux/i2c.h>
+#include <linux/input/edt-ft5x06.h>
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
@@ -175,6 +176,23 @@ struct platform_device sun5i_twi2_device = {
 	},
 };
 
+#if defined CONFIG_TOUCHSCREEN_EDT_FT5X06 || defined CONFIG_TOUCHSCREEN_EDT_FT5X06_MODULE
+static struct edt_ft5x06_platform_data edt_ft5x06_pdata = {
+	.irq_pin = 14,
+	.reset_pin = -1,
+};
+#endif
+
+static struct i2c_board_info sun5i_i2c_boardinfo[] __initdata = {
+#if defined CONFIG_TOUCHSCREEN_EDT_FT5X06 || defined CONFIG_TOUCHSCREEN_EDT_FT5X06_MODULE
+	{
+		I2C_BOARD_INFO("edt-ft5x06", 0x38),
+		.irq = SW_INT_IRQNO_PIO,
+		.platform_data  = &edt_ft5x06_pdata,
+	},
+#endif /* EDT_FT5X06 */
+};
+
 static struct platform_device *sw_pdevs[] __initdata = {
 	&debug_uart,
 	&sw_pdev_dmac,
@@ -187,4 +205,7 @@ static struct platform_device *sw_pdevs[] __initdata = {
 void __init sw_pdev_init(void)
 {
 	platform_add_devices(sw_pdevs, ARRAY_SIZE(sw_pdevs));
+	
+	i2c_register_board_info(0, sun5i_i2c_boardinfo, 
+	                ARRAY_SIZE(sun5i_i2c_boardinfo));
 }
